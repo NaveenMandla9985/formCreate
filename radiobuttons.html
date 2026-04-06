@@ -10,20 +10,21 @@
     height: 2500px;
     padding: 20px;
     text-align: center;
-    background: linear-gradient(to right, #74ebd5, #ACB6E5);
+    background: linear-gradient(to right, #e0eafc, #cfdef3);
     transition: all 0.8s ease;
+    color: #222;
   }
 
   .selected-theme {
-    background: linear-gradient(to right, #ff9966, #ff5e62);
-    color: white;
+    background: #2c3e50;
+    color: #ecf0f1;
   }
 
   h2 {
     position: fixed;
     top: 0;
     width: 100%;
-    background: rgba(255,255,255,0.9);
+    background: rgba(255,255,255,0.95);
     padding: 10px;
     z-index: 1000;
   }
@@ -39,45 +40,38 @@
     margin-top: 10px;
   }
 
-  .loader {
-    margin: 20px auto;
-    border: 8px solid #f3f3f3;
-    border-top: 8px solid #3498db;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    animation: spin 1s linear infinite;
-  }
-
-  @keyframes spin {
-    100% { transform: rotate(360deg); }
-  }
-
-  .hidden { display: none; }
-
   .radio-container {
     margin-top: 700px;
     width: 320px;
     margin-left: auto;
     margin-right: auto;
-    background: rgba(255,255,255,0.85);
+    background: rgba(255,255,255,0.9);
     padding: 20px;
     border-radius: 10px;
+  }
+
+  .selected-theme .radio-container {
+    background: rgba(0,0,0,0.3);
   }
 
   .radio-header {
     font-size: 20px;
     font-weight: bold;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
   }
 
-  /* 🎨 Radio Styling */
+  #radioMessage {
+    font-size: 16px;
+    font-weight: bold;
+    color: #d35400;
+    margin-bottom: 10px;
+  }
+
   .radio-item {
     margin: 15px 0;
     font-size: 18px;
     color: #222;
     font-weight: 500;
-    transition: color 0.5s ease;
   }
 
   .radio-item:hover {
@@ -85,17 +79,14 @@
     cursor: pointer;
   }
 
-  /* 🎨 Selected Theme Text */
   .selected-theme .radio-item {
-    color: #ffffff;
+    color: #ecf0f1;
   }
 
-  /* 🌟 Highlight selected radio */
   input[type="radio"]:checked + span {
     font-weight: bold;
-    color: #ffeb3b;
+    color: #f1c40f;
   }
-
 </style>
 </head>
 
@@ -106,11 +97,12 @@
 <div id="timer">Time Left: 40s</div>
 <div id="status">5th radio button will be selected</div>
 
-<div id="loader" class="loader"></div>
-
 <div class="radio-container">
 
   <div class="radio-header">Radio buttons selection defaultly</div>
+
+  <!-- ✅ Message above radio buttons -->
+  <div id="radioMessage"></div>
 
   <div class="radio-item"><input type="radio" id="r1" name="r"> <span>Naveen radio Button 1</span></div>
   <div class="radio-item"><input type="radio" id="r2" name="r"> <span>Naveen radio Button 2</span></div>
@@ -139,14 +131,14 @@ function startTimer() {
     timeLeft--;
     updateTimer();
 
-    // 📢 Show message at 7 sec
-    if (timeLeft === 7) {
+    // 📢 Show message at 17 sec
+    if (timeLeft === 17) {
       document.getElementById("status").innerText =
         "Page scroll action is performing DOWN to select the radio button";
     }
 
-    // ⬇ Scroll at 5 sec
-    if (timeLeft === 5) {
+    // ⬇ Scroll at 15 sec
+    if (timeLeft === 15) {
       performScrollAndSelect();
     }
 
@@ -181,37 +173,62 @@ function performScrollAndSelect() {
   targetDiv.scrollIntoView({ behavior: "smooth", block: "center" });
 
   setTimeout(() => {
-    // 🎯 Select radio
+
+    // 🎯 SELECT
     targetRadio.checked = true;
     document.body.classList.add("selected-theme");
 
-    // ⏸ Wait 2–3 sec
-    setTimeout(() => {
-
-      document.getElementById("status").innerText =
-        "Page scroll action is performing UP after selection";
-
-      // ⬆ Scroll UP
-      window.scrollTo({ top: 0, behavior: "smooth" });
-
-      // ⏸ Wait 1 sec → next phase
-      setTimeout(() => {
-
-        if (phase === 1) {
-          phase = 2;
-          document.getElementById("status").innerText =
-            "7th radio button is going to select";
-          startTimer();
-        }
-
-      }, 1000);
-
-    }, 2500);
+    startDeselectionCountdown(targetRadio);
 
   }, 800);
 }
 
-// Start
+function startDeselectionCountdown(targetRadio) {
+
+  let countdown = 28;
+
+  const interval = setInterval(() => {
+
+    // ✅ Message ABOVE radio buttons
+    document.getElementById("radioMessage").innerText =
+      "Radio will be deselected in " + countdown + " seconds...";
+
+    countdown--;
+
+    if (countdown < 0) {
+      clearInterval(interval);
+
+      // ❌ DESELECT
+      targetRadio.checked = false;
+
+      document.getElementById("radioMessage").innerText = "";
+
+      document.getElementById("status").innerText =
+        "Page scroll action is performing UP after deselection";
+
+      // ⏳ Wait 5 sec
+      setTimeout(() => {
+
+        // ⬆ Scroll UP
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
+        // 🔁 Next Phase
+        setTimeout(() => {
+          if (phase === 1) {
+            phase = 2;
+            document.getElementById("status").innerText =
+              "7th radio button is going to select";
+            startTimer();
+          }
+        }, 1000);
+
+      }, 5000);
+    }
+
+  }, 1000);
+}
+
+// 🚀 Start
 startTimer();
 
 </script>
