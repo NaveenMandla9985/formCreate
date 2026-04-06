@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Naveen Final Automation Page</title>
+
+<style>
+  body {
+    font-family: Arial;
+    height: 2500px;
+    padding: 20px;
+    text-align: center;
+    background: linear-gradient(to right, #74ebd5, #ACB6E5);
+    transition: all 0.8s ease;
+  }
+
+  .selected-theme {
+    background: linear-gradient(to right, #ff9966, #ff5e62);
+    color: white;
+  }
+
+  h2 {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(255,255,255,0.9);
+    padding: 10px;
+    z-index: 1000;
+  }
+
+  #timer {
+    margin-top: 60px;
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  #status {
+    font-size: 18px;
+    margin-top: 10px;
+  }
+
+  .loader {
+    margin: 20px auto;
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    100% { transform: rotate(360deg); }
+  }
+
+  .hidden { display: none; }
+
+  .radio-container {
+    margin-top: 700px;
+    width: 320px;
+    margin-left: auto;
+    margin-right: auto;
+    background: rgba(255,255,255,0.85);
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  .radio-header {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+
+  /* 🎨 Radio Styling */
+  .radio-item {
+    margin: 15px 0;
+    font-size: 18px;
+    color: #222;
+    font-weight: 500;
+    transition: color 0.5s ease;
+  }
+
+  .radio-item:hover {
+    color: #007bff;
+    cursor: pointer;
+  }
+
+  /* 🎨 Selected Theme Text */
+  .selected-theme .radio-item {
+    color: #ffffff;
+  }
+
+  /* 🌟 Highlight selected radio */
+  input[type="radio"]:checked + span {
+    font-weight: bold;
+    color: #ffeb3b;
+  }
+
+</style>
+</head>
+
+<body>
+
+<h2>Naveen Automation Demo</h2>
+
+<div id="timer">Time Left: 40s</div>
+<div id="status">5th radio button will be selected</div>
+
+<div id="loader" class="loader"></div>
+
+<div class="radio-container">
+
+  <div class="radio-header">Radio buttons selection defaultly</div>
+
+  <div class="radio-item"><input type="radio" id="r1" name="r"> <span>Naveen radio Button 1</span></div>
+  <div class="radio-item"><input type="radio" id="r2" name="r"> <span>Naveen radio Button 2</span></div>
+  <div class="radio-item"><input type="radio" id="r3" name="r"> <span>Naveen radio Button 3</span></div>
+  <div class="radio-item"><input type="radio" id="r4" name="r"> <span>Naveen radio Button 4</span></div>
+  <div class="radio-item" id="r5div"><input type="radio" id="r5" name="r"> <span>Naveen radio Button 5</span></div>
+  <div class="radio-item"><input type="radio" id="r6" name="r"> <span>Naveen radio Button 6</span></div>
+  <div class="radio-item" id="r7div"><input type="radio" id="r7" name="r"> <span>Naveen radio Button 7</span></div>
+  <div class="radio-item"><input type="radio" id="r8" name="r"> <span>Naveen radio Button 8</span></div>
+  <div class="radio-item"><input type="radio" id="r9" name="r"> <span>Naveen radio Button 9</span></div>
+  <div class="radio-item"><input type="radio" id="r10" name="r"> <span>Naveen radio Button 10</span></div>
+
+</div>
+
+<script>
+
+let phase = 1;
+let timeLeft = 40;
+let timer;
+
+function startTimer() {
+  timeLeft = 40;
+  updateTimer();
+
+  timer = setInterval(() => {
+    timeLeft--;
+    updateTimer();
+
+    // 📢 Show message at 7 sec
+    if (timeLeft === 7) {
+      document.getElementById("status").innerText =
+        "Page scroll action is performing DOWN to select the radio button";
+    }
+
+    // ⬇ Scroll at 5 sec
+    if (timeLeft === 5) {
+      performScrollAndSelect();
+    }
+
+    // ⏱ End
+    if (timeLeft === 0) {
+      clearInterval(timer);
+
+      document.getElementById("status").innerText =
+        "You have waited for 40 seconds and scroll performed properly";
+    }
+
+  }, 1000);
+}
+
+function updateTimer() {
+  document.getElementById("timer").innerText = "Time Left: " + timeLeft + "s";
+}
+
+function performScrollAndSelect() {
+
+  let targetDiv, targetRadio;
+
+  if (phase === 1) {
+    targetDiv = document.getElementById("r5div");
+    targetRadio = document.getElementById("r5");
+  } else {
+    targetDiv = document.getElementById("r7div");
+    targetRadio = document.getElementById("r7");
+  }
+
+  // ⬇ Scroll DOWN
+  targetDiv.scrollIntoView({ behavior: "smooth", block: "center" });
+
+  setTimeout(() => {
+    // 🎯 Select radio
+    targetRadio.checked = true;
+    document.body.classList.add("selected-theme");
+
+    // ⏸ Wait 2–3 sec
+    setTimeout(() => {
+
+      document.getElementById("status").innerText =
+        "Page scroll action is performing UP after selection";
+
+      // ⬆ Scroll UP
+      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      // ⏸ Wait 1 sec → next phase
+      setTimeout(() => {
+
+        if (phase === 1) {
+          phase = 2;
+          document.getElementById("status").innerText =
+            "7th radio button is going to select";
+          startTimer();
+        }
+
+      }, 1000);
+
+    }, 2500);
+
+  }, 800);
+}
+
+// Start
+startTimer();
+
+</script>
+
+</body>
+</html>
